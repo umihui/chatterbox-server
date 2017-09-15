@@ -11,27 +11,34 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10, // Seconds.
+  'Content-Type': 'application/json'
+};
 var url = require('url');
 var path = require('path');
 var count = 2;
-//var messages = {results:[{username:'umi', text:'hi', roomname:'lobby', objectId: '0'},{username:'Jay', text:'hi', roomname:'new',objectId:'1'}]};
-var messages = {results:[]};
+var messages = {results: [{username: 'umi', message: 'hi', roomname: 'lobby', objectId: '0'}, {username: 'Jay', message: 'hi', roomname: 'new', objectId: '1'}]};
+//var messages = {results:[]};
 var requestHandler = function(request, response) {
 
 
   var statusCode = 200;
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'application/json';
-  console.log('request',request.method);
+  console.log('request', request.method);
 
   if (request.method === 'OPTIONS') {
     statusCode = 200;
     response.writeHead(statusCode, headers);
-    response.end();
+    response.end('');
   }
 
   if (request.method === 'GET') {
-    if(request.url === '/classes/messages') {
+    if (request.url === '/classes/messages') {
       statusCode = 200;
 
       response.writeHead(statusCode, headers);
@@ -43,12 +50,12 @@ var requestHandler = function(request, response) {
   }
 
   if (request.method === 'POST') {
-    if(request.url === '/classes/messages') {
+    if (request.url === '/classes/messages') {
       console.log('server post');
       statusCode = 201;
       request.setEncoding('utf8');
       var body = '';
-      request.on('data',function(data) {
+      request.on('data', function(data) {
         console.log(messages);
         var obj = JSON.parse(data);
         // var chunks = data.split('&');
@@ -88,13 +95,7 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10, // Seconds.
-  'Content-Type': "application/json"
-};
+
 
 exports.requestHandler = requestHandler;
 exports.defaultCorsHeaders = defaultCorsHeaders;
